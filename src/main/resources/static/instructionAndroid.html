@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование приложения - River Of Life</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+          background-color: #e0f7ff;
+        }
+
+        .footer-link {
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .footer-link:hover {
+          text-decoration: underline;
+        }
+
+        .card {
+          max-width: 600px;
+          width: 100%;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<main class="container d-flex flex-column justify-content-center align-items-center flex-grow-1 text-center py-5">
+    <h1 class="mb-4">Приложение в стадии тестирования</h1>
+
+    <div class="card shadow-sm p-4 mb-4">
+        <form id="testForm" class="text-start">
+
+            <p class="mb-3">
+                Приложение временно проходит стадию тестирования в соответствии с политикой Android и пока недоступно
+                для
+                широкой аудитории.
+                <br>Вы можете подать заявку на доступ, заполнив форму ниже.
+
+            </p>
+
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email, <strong>привязанный к Google Play</strong></label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Подать заявку</button>
+
+            <p class="mt-4 text-muted">
+                После проверки заявки на указанный email придёт сообщение с кодом и инструкцией для скачивания тестовой
+                версии приложения.
+            </p>
+        </form>
+
+    </div>
+
+</main>
+
+<footer class="bg-primary text-white text-center py-3">
+    © 2025 Все права защищены |
+    <a href="/privacy-policy" class="footer-link ms-2">
+        <i class="bi bi-shield-lock-fill"></i> Политика конфиденциальности
+    </a>
+</footer>
+<script>
+    document.getElementById('testForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // не отправлять стандартно
+
+        const data = {
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            email: document.getElementById('email').value.trim()
+        };
+
+        fetch('/api/v1/android/test-request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                // Скрыть форму
+                document.getElementById('testForm').style.display = 'none';
+
+                // Показать сообщение
+                const message = document.createElement('div');
+                message.className = 'mt-4 text-center';
+                message.innerHTML = `
+                    <h4 class="text-success mb-3">Спасибо за вашу заявку!</h4>
+                    <p class="text-muted">
+                        В течении суток на указанный email будет отправлено письмо с кодом доступа и ссылкой на установку тестовой версии приложения.<br>
+                        Пожалуйста, проверьте папку "Спам", если письмо не пришло в течение суток.
+                    </p>
+                `;
+                document.querySelector('.card').appendChild(message);
+            } else {
+                alert('Ошибка при отправке. Попробуйте позже.');
+            }
+        }).catch(error => {
+            console.error('Ошибка запроса:', error);
+            alert('Ошибка сети. Проверьте подключение.');
+        });
+    });
+</script>
+
+
+</body>
+</html>
